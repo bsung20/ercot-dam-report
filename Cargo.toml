@@ -12,3 +12,4 @@ tokio = { version = "1", features = ["full"] }
 scraper = { version = "0.13.0" }
 csv = "1.1"
 chrono = "0.4.23"
+mockall = "0.10.2"

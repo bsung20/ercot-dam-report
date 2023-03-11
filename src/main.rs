@@ -2,6 +2,7 @@ use scraper::{Html,Selector};
 use std::error::Error;
 use csv::Writer;
 use chrono::prelude::*;
+// use std::env;
 
 #[derive(serde::Serialize)]
 struct Prices{
@@ -11,12 +12,12 @@ struct Prices{
     lz_west: f32
 }
 
-
 #[tokio::main]
 async fn main(){
 
+    // let args: Vec<String> = env::args().collect();
+
     let url = create_local_date_url();
-    // print!("{}", url);
 
     let response = call_api(url).await;
     let response = match response {
@@ -88,8 +89,6 @@ async fn call_api(url: String) -> Result<String, reqwest::Error>{
         .await?
         .text()
         .await?;
-
-    // print!("{}", res);
 
     Ok(res)
 }
