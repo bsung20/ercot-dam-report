@@ -17,14 +17,17 @@ async fn main(){
 
     // let args: Vec<String> = env::args().collect();
 
+    //retrieve and create a get request url for the Local date
     let url = create_local_date_url();
 
-    let response = call_api(url).await;
+    //retrieve DAM prices in html format from ERCOT api
+    let response = call_ercot_api(url).await;
     let response = match response {
         Ok(res) => res,
         Err(error) => panic!("Could not reach Api: {}", error)
     };
 
+    //Parse HTML and write desired prices to csv file
     let write = write_csv(&response.to_owned(), "prices.csv".to_string());
     match write {
         Ok(res) => res,
@@ -51,20 +54,24 @@ fn create_local_date_url() -> String {
 
 fn write_csv(response: &str, path: String) -> Result<(), Box<dyn Error>> {
 
+    //parse html document
     let document = Html::parse_document(&response);
     let selector = Selector::parse("tr").unwrap();
 
+    //create a csv writr
     let mut wtr = Writer::from_path(path)?;
 
-
+    //loop through every row in prices table
     for element in document.select(&selector){
 
         let row = element.text().collect::<Vec<_>>();
 
+        //filter out an extra indicies that are not useful data
         let filtered_row = row.iter()
             .filter(|&&i| i != "\n\t\t" && i != "\n\t")
             .collect::<Vec<_>>();
 
+        //add each serialized struct row to the csv writer
         if filtered_row[0] != &"Oper Day" {
             wtr.serialize(Prices{
                 lz_houston : filtered_row[11].parse::<f32>().unwrap(),
@@ -75,14 +82,16 @@ fn write_csv(response: &str, path: String) -> Result<(), Box<dyn Error>> {
         }
     }
 
+    //write csv file
     wtr.flush()?;
 
     Ok(())
 }
 
 
-async fn call_api(url: String) -> Result<String, reqwest::Error>{
+async fn call_ercot_api(url: String) -> Result<String, reqwest::Error>{
 
+    //make a get request to the ercot dam api
     let res = reqwest::Client::new()
         .get(url)
         .send()
