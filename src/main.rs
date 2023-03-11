@@ -1,12 +1,23 @@
 
-fn main() {
-    println!("Hello, world!");
+
+
+#[tokio::main]
+async fn main(){
+    call_api().await;
 }
 
-// async fn call_api(){
-//     let url = "https://www.ercot.com/content/cdr/html/20230308_dam_spp.html";
+async fn call_api() -> Result<(),reqwest::Error>{
+    let url = "https://www.ercot.com/content/cdr/html/20230308_dam_spp.html";
 
-//     let res = reqwest::get(url).await.unwrap().text().await.unwrap();
+    let res = reqwest::Client::new()
+        .get(url)
+        .send()
+        .await?
+        .text()
+        .await?;
 
-//     println!("response! \n\n{}", res)
-// }
+    print!("{:?}", res);
+
+    Ok(())
+}
+
