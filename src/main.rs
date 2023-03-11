@@ -1,4 +1,4 @@
-
+use scraper::{Html,Selector};
 
 
 #[tokio::main]
@@ -16,7 +16,16 @@ async fn call_api() -> Result<(),reqwest::Error>{
         .text()
         .await?;
 
-    print!("{:?}", res);
+    let document = Html::parse_document(&res);
+
+    let selector = Selector::parse("td").unwrap();
+
+    for element in document.select(&selector){
+        let mut m = element.text().fold(init, f);
+        println!("{}", m);
+    }
+
+    // print!("{:?}", res);
 
     Ok(())
 }
