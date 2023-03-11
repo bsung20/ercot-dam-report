@@ -15,8 +15,6 @@ struct Prices{
 #[tokio::main]
 async fn main(){
 
-    // let args: Vec<String> = env::args().collect();
-
     //retrieve and create a get request url for the Local date
     let url = create_local_date_url();
 
