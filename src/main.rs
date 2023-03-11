@@ -21,8 +21,8 @@ async fn call_api() -> Result<(),reqwest::Error>{
     let selector = Selector::parse("td").unwrap();
 
     for element in document.select(&selector){
-        let mut m = element.value().name();
-        println!("{}", m);
+        let m = element.text().last();
+        println!("{:?}", m);
     }
 
     // print!("{:?}", res);
