@@ -21,7 +21,7 @@ async fn call_api() -> Result<(),reqwest::Error>{
     let selector = Selector::parse("td").unwrap();
 
     for element in document.select(&selector){
-        let mut m = element.text().fold(init, f);
+        let mut m = element.value().name();
         println!("{}", m);
     }
 
