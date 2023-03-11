@@ -16,7 +16,7 @@ struct Prices{
 async fn main(){
 
     let url = create_local_date_url();
-    print!("{}", url);
+    // print!("{}", url);
 
     let response = call_api(url).await;
     match response {
@@ -29,7 +29,7 @@ async fn main(){
 fn create_local_date_url() -> String {
     let local_date_time = Local::now();
 
-    let month = local_date_time.month().to_string();
+    let month = "0".to_owned() + &local_date_time.month().to_string();
     let day = local_date_time.day().to_string();
     let year = local_date_time.year().to_string();
 
@@ -81,6 +81,8 @@ async fn call_api(url: String) -> Result<String, reqwest::Error>{
         .await?
         .text()
         .await?;
+
+    // print!("{}", res);
 
     Ok(res)
 }
