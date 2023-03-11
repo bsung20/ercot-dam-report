@@ -19,10 +19,17 @@ async fn main(){
     // print!("{}", url);
 
     let response = call_api(url).await;
-    match response {
-        Ok(res) => write_csv(&res.to_owned(), "prices.csv".to_string()),
-        Err(e) => {Ok(print!("Could not reach api: {}", e))}
+    let response = match response {
+        Ok(res) => res,
+        Err(error) => panic!("Could not reach Api: {}", error)
     };
+
+    let write = write_csv(&response.to_owned(), "prices.csv".to_string());
+    match write {
+        Ok(res) => res,
+        Err(error) => panic!("Could not write to csv: {}", error)
+    };
+
 
 }
 
@@ -87,3 +94,5 @@ async fn call_api(url: String) -> Result<String, reqwest::Error>{
     Ok(res)
 }
 
+#[cfg(test)]
+mod test;
